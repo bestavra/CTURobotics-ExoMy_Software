@@ -23,6 +23,9 @@ RUN npm install http-server -g
 RUN apt-get update && \
     apt-get install ros-melodic-web-video-server ros-melodic-usb-cam -y
 
+# Install packages for GPIO use
+RUN pip install rpi.gpio
+
 # Add ros sourcing to bashrc
 RUN echo ". /opt/ros/melodic/setup.bash" >> ~/.bashrc
 

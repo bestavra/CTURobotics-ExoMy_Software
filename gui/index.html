@@ -21,6 +21,7 @@
     var axes = [0, 0, 0, 0, 0, 0];
     var buttons = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
+	/*
     ros.on('connection', function () {
       document.getElementById("status").innerHTML = "Connected";
     });
@@ -32,7 +33,20 @@
     ros.on('close', function () {
       document.getElementById("status").innerHTML = "Closed";
     });
+	*/
+	
+	ros.on('connection', function() {
+	    console.log('Connected to websocket server.');
+	});
 
+	ros.on('error', function(error) {
+	    console.log('Error connecting to websocket server: ', error);
+	});
+
+	ros.on('close', function() {
+	    console.log('Connection to websocket server closed.');
+	});
+	
     createJoystick = function () {
       var options = {
         zone: document.getElementById('joy_container'),
@@ -80,6 +94,7 @@
         console.log('End function called')
       });
     }
+	
     window.onload = function () {
       createJoystick();
       // Video output
@@ -119,7 +134,36 @@
       // After the command is sent set the index back to 0
       buttons[button_index] = 0;
     }
+	
+	var temp_listener = new ROSLIB.Topic({
+    	ros: ros,
+		name: '/temperature',
+		messageType: 'sensor_msgs/Temperature'
+	});
+	
+	temp_listener.subscribe(function(message) {
+    	console.log('Received message on ' + temp_listener.name + ': ' + message.temperature);
+		//temp_listener.unsubscribe();
+	});
 
+	var motor_listener = new ROSLIB.Topic({
+    	ros: ros,
+		name: '/rover_command',
+		messageType: 'exomy/RoverCommand'
+	});
+	
+	motor_listener.subscribe(function(message) {
+    	//console.log('Received message on ' + motor_listener.name + ': ' + message.motors_enabled);
+		if (message.motors_enabled === true) {
+			document.getElementById("buttonStart").innerHTML = "Turn MOTORS OFF";
+			document.getElementById("buttonStart").style.backgroundColor = "red";
+		}
+		else {
+			document.getElementById("buttonStart").innerHTML = "Turn MOTORS ON";
+			document.getElementById("buttonStart").style.backgroundColor = "green";
+		}
+	});
+	
 	// Load Shutdown URL from system server and trigger therfore the defined shutdown
 	shutdownrpi = function () {
 		var answer = window.confirm("Shutdown ExoMy?");
@@ -176,7 +220,7 @@
           <button class="button buttonY" onclick="button_clicked(3)">CRABBING</button>
           <button class="button buttonX" onclick="button_clicked(0)">SPOT TURN</button>
           <button class="button buttonA" onclick="button_clicked(1)">ACKERMANN</button>
-          <button class="button buttonStart" onclick="button_clicked(9)">MOTORS OFF/ON</button>
+          <button id="buttonStart" class="button buttonStart" onclick="button_clicked(9)">MOTORS OFF/ON</button>
           <button id="shutdown" class="button buttonShutdown" onclick="shutdownrpi()">Shutdown</button>
         </div>
       </div>
@@ -185,7 +229,6 @@
 
   <!-- Load a ping image to check if system server is running and hide shutdown button if not, as it would not work -->
   <img id="ping" class="hidden" width="1" height="1" onerror="showOrHide('shutdown');"/>
-  <!-- Add hidden ROS status field -->
-  <p id="status" class="hidden"></p>
+
 </body>
 </html>
