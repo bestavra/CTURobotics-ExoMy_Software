@@ -1,0 +1,12 @@
+# Pin numbers for servos on PWM board
+pin_servo_1: 8
+
+## PWM values
+# Those values highly depend on the motors and pwm board used
+# Check out the wiki for further explanation
+
+# PWM values for the neutral servo position
+servo_pwm_neutral_1: 290
+
+# PWW range around steering neutral position
+servo_pwm_range_1: 183

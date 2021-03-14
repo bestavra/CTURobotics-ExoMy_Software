@@ -105,6 +105,7 @@
       ping_url = 'http://' + host_url + ':8001/ping.png';
       console.log(ping_url);
       document.getElementById("ping").src = ping_url;
+	  document.getElementById('camera_position_slider').value = 0;
     }
 
     joy_listener = new ROSLIB.Topic({
@@ -152,6 +153,22 @@
 		}
 	});
 
+	/* Camera position */
+	var camera_position = new ROSLIB.Topic({
+		ros : ros,
+		name : '/servo_commands',
+		messageType : 'exomy/ServoCommands'
+	});
+	
+	move_camera = function () {
+	    // Initialize Axes and Buttons arrays
+		alert(document.getElementById("camera_position_slider").value);
+	    var camera = [0];
+		camera = [parseInt(document.getElementById("camera_position").value)];
+		var twist = new ROSLIB.Message({servo_angles : camera});
+		camera_position.publish(twist);
+	}
+
 	// Load Shutdown URL from system server and trigger therfore the defined shutdown
 	shutdownrpi = function () {
 		var answer = window.confirm("Shutdown ExoMy?");
@@ -196,6 +213,19 @@
     <div class="wrapper">
       <div class="left" id="left">
         <div class="joy_container" id="joy_container"></div>
+		<div class="control_container" id="control_container">
+			<!--Camera position:
+			<select id="camera_position" onchange="move_camera()">
+				<option value="45">Up</option>
+				<option value="0" selected>Straight</option>
+				<option value="-45">Down</option>
+			</select>
+			-->
+			<div class="camera_position" style="font-size:12px;">
+				<label for="camera_position_slider">Camera position:</label></br>
+			    <div>-45° <input id="camera_position_slider" type="range" min="-45" max="45" value="0" onchange="move_camera()"> +45°</div>
+			</div>
+		</div>
       </div>
 
       <div class="middle" id="middle">
