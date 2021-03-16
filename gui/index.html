@@ -162,9 +162,9 @@
 	
 	move_camera = function () {
 	    // Initialize Axes and Buttons arrays
-		alert(document.getElementById("camera_position_slider").value);
+		// alert(document.getElementById("camera_position_slider").value);
 	    var camera = [0];
-		camera = [parseInt(document.getElementById("camera_position").value), 0, 0, 0];
+		camera = [parseInt(document.getElementById("camera_position_slider").value), 0, 0, 0];
 		var twist = new ROSLIB.Message({servo_angles : camera});
 		camera_position.publish(twist);
 	}
@@ -223,7 +223,7 @@
 			-->
 			<div class="camera_position" style="font-size:12px;">
 				<label for="camera_position_slider">Camera position:</label></br>
-			    <div>-45° <input id="camera_position_slider" type="range" min="-45" max="45" value="0" onchange="move_camera()"> +45°</div>
+			    <div>-45° <input id="camera_position_slider" type="range" min="-45" max="50" value="0" onchange="move_camera()"> +50°</div>
 			</div>
 		</div>
       </div>

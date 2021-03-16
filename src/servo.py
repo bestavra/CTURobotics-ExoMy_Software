@@ -68,11 +68,11 @@ class Servo():
         for servo_name, servo_pin in self.pins['servo'].items():
             if servo_pin != 99:
                 #90 degree limit protection (does not protect from false configuration of PWM settings)
-                if angle_command >= -90 and angle_command <= 90:
+                if angle_command[servo_name] >= -90 and angle_command[servo_name] <= 90:
                     duty_cycle = int(self.servo_pwm_neutral[servo_name] + angle_command[servo_name]/90.0 * self.servo_pwm_range[servo_name])
                     
                     self.pwm.set_pwm(servo_pin, 0, duty_cycle)
                 else:
-                    pass
+                    rospy.loginfo("Servo angle exceeded +/- 90 degree limits - no actions to protect servo!")
             else:
                 pass

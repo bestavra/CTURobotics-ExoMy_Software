@@ -10,10 +10,7 @@ global watchdog_timer
 
 
 def callback(cmds):
-    if cmds.servo_angles >= -90 and cmds.servo_angles <= 90:
         servo.setAngle(cmds.servo_angles)
-    else:
-        rospy.loginfo("Servo angle exceeded +/- 90 degree limits - no actions to protect servo!")
 
 if __name__ == "__main__":
     # This node waits for commands from the robot and sets the motors accordingly
