@@ -164,7 +164,7 @@
 	    // Initialize Axes and Buttons arrays
 		alert(document.getElementById("camera_position_slider").value);
 	    var camera = [0];
-		camera = [parseInt(document.getElementById("camera_position").value)];
+		camera = [parseInt(document.getElementById("camera_position").value), 0, 0, 0];
 		var twist = new ROSLIB.Message({servo_angles : camera});
 		camera_position.publish(twist);
 	}

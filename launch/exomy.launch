@@ -25,6 +25,6 @@
 
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
     <rosparam file="$(find exomy)/config/exomy.yaml"/> 
-	<rosparam file="$(find exomy)/config/exomy_addon.yaml"/> 
+	<rosparam file="$(find exomy)/config/exomy_servo_node.yaml"/> 
 
 </launch>
