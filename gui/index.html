@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <title>ExoMy Control Center</title>
-  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"> 
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <script type="text/javascript" src="./roslib.min.js"></script>
   <script src="./node_modules/nipplejs/dist/nipplejs.js"></script>
   <script type="text/javascript">
@@ -34,7 +34,7 @@
       document.getElementById("status").innerHTML = "Closed";
     });
 	*/
-	
+
 	ros.on('connection', function() {
 	    console.log('Connected to websocket server.');
 	});
@@ -68,9 +68,9 @@
         axes = [x, y, 0, 0, 0, 0]
 
         // nipplejs is triggering events when joystick moves each pixel
-        // we need delay between consecutive messege publications to 
+        // we need delay between consecutive messege publications to
         // prevent system from being flooded by messages
-        // events triggered earlier than 50ms after last publication will be dropped 
+        // events triggered earlier than 50ms after last publication will be dropped
 
         if (publishImmidiately) {
           publishImmidiately = false;
@@ -95,13 +95,14 @@
       });
     }
     window.onload = function () {
+      joy_event();
       createJoystick();
       // Video output
       stream_url = '//' + host_url + ':8080/stream?topic=/pi_cam/image_raw';
       console.log(stream_url);
       document.getElementById("video_output").src = stream_url;
       // Ping output
-	  // Load a ping image to check if system server is running 
+	  // Load a ping image to check if system server is running
       ping_url = 'http://' + host_url + ':8001/ping.png';
       console.log(ping_url);
       document.getElementById("ping").src = ping_url;
@@ -133,13 +134,13 @@
       // After the command is sent set the index back to 0
       buttons[button_index] = 0;
     }
-	
+
 	var motor_listener = new ROSLIB.Topic({
     	ros: ros,
 		name: '/rover_command',
 		messageType: 'exomy/RoverCommand'
 	});
-	
+
 	motor_listener.subscribe(function(message) {
     	//console.log('Received message on ' + motor_listener.name + ': ' + message.motors_enabled);
 		if (message.motors_enabled === true) {
@@ -172,9 +173,9 @@
 		else {
 		    // alert("Shutdown aborted!")
 		}
-	
+
 	}
-	
+
 	// Show and Hide elements by ID
 	function showOrHide(id) {
 	      var element = document.getElementById(id);
@@ -185,7 +186,7 @@
 	         element.style.display = "none";
 	      }
 	   }
-	
+
   </script>
   <link rel="stylesheet" type="text/css" href="style.css">
 
