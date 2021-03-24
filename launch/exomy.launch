@@ -3,6 +3,8 @@
     <node name="motors" pkg="exomy" type="motor_node.py" respawn="true" output="screen" />
     <node name="joystick" pkg="exomy" type="joystick_parser_node.py" respawn="true" output="screen" />
 	<node name="servos" pkg="exomy" type="servo_node.py" respawn="true" output="screen" />
+	<node name="compass" pkg="exomy" type="compass_node.py" respawn="true" output="screen" />
+	<node name="navigation" pkg="exomy" type="navigation_parser_node.py" respawn="true" output="screen" />
 
     <node respawn="true" pkg="joy" type="joy_node" name="joy_node">
         <param name="coalesce_interval" value="0.05"/>
@@ -11,6 +13,8 @@
     <node pkg="web_video_server" type="web_video_server"  name="web_video_server" respawn="false" output="screen">
         <param name="default_transport" value="compressed"/>
         <param name="quality" value="50"/>
+		<param name="width" value="640"/>
+		<param name="height" value="480"/>
     </node>
 
     <node pkg="usb_cam" type="usb_cam_node" name="pi_cam" respawn="false" output="screen">
@@ -26,5 +30,6 @@
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
     <rosparam file="$(find exomy)/config/exomy.yaml"/> 
 	<rosparam file="$(find exomy)/config/exomy_servo_node.yaml"/> 
+	<rosparam file="$(find exomy)/config/exomy_compass_node.yaml"/> 
 
 </launch>

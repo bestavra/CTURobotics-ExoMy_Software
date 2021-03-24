@@ -55,6 +55,8 @@ add_message_files(
       MotorCommands.msg
 	  ServoCommands.msg
       Screen.msg
+	  Compass.msg
+	  NavigationCommand.msg
   )
 ## Generate services in the 'srv' folder
 # add_service_files(

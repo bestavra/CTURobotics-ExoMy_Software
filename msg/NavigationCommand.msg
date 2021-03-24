@@ -1,0 +1,2 @@
+bool auto_navigation
+int32 heading

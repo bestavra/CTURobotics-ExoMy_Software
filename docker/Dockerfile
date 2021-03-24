@@ -12,6 +12,8 @@ RUN apt-get update && \
 RUN apt-get update && apt-get install ros-melodic-rosbridge-server ros-melodic-joy -y
 RUN pip install adafruit-pca9685
 
+# Install smbus
+RUN pip install smbus
 
 # Install packages for web application
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -

@@ -7,6 +7,7 @@
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"> 
   <script type="text/javascript" src="./roslib.min.js"></script>
   <script src="./node_modules/nipplejs/dist/nipplejs.js"></script>
+  <script src="./gauge.min.js"></script>
   <script type="text/javascript">
     var publishImmidiately = true;
     var host_url = window.location.hostname;
@@ -95,17 +96,22 @@
       });
     }
     window.onload = function () {
-      createJoystick();
-      // Video output
-      stream_url = '//' + host_url + ':8080/stream?topic=/pi_cam/image_raw';
-      console.log(stream_url);
-      document.getElementById("video_output").src = stream_url;
-      // Ping output
-	  // Load a ping image to check if system server is running 
-      ping_url = 'http://' + host_url + ':8001/ping.png';
-      console.log(ping_url);
-      document.getElementById("ping").src = ping_url;
-	  document.getElementById('camera_position_slider').value = 0;
+		joy_event();	
+      	createJoystick();
+		// Video output
+      	stream_url = '//' + host_url + ':8080/stream?topic=/pi_cam/image_raw';
+      	console.log(stream_url);
+      	document.getElementById("video_output").src = stream_url;
+      	// Ping output
+	  	// Load a ping image to check if system server is running 
+      	ping_url = 'http://' + host_url + ':8001/ping.png';
+      	console.log(ping_url);
+      	document.getElementById("ping").src = ping_url;
+	  	document.getElementById('camera_position_slider').value = 0;
+	  	move_camera();
+	  	document.getElementById('heading_slider').value = 0;
+		document.getElementById('heading_diff_slider').value = 0;
+	  	new_heading(false);
     }
 
     joy_listener = new ROSLIB.Topic({
@@ -140,7 +146,7 @@
 		name: '/rover_command',
 		messageType: 'exomy/RoverCommand'
 	});
-	
+		
 	motor_listener.subscribe(function(message) {
     	//console.log('Received message on ' + motor_listener.name + ': ' + message.motors_enabled);
 		if (message.motors_enabled === true) {
@@ -152,6 +158,24 @@
 			document.getElementById("buttonStart").style.backgroundColor = "green";
 		}
 	});
+
+
+	var bearing_listener = new ROSLIB.Topic({
+    	ros: ros,
+		name: '/bearing',
+		messageType: 'exomy/Compass'
+	});
+	
+	bearing_listener.subscribe(function(message) {
+    	// console.log('Received message on ' + bearing_listener.name + ': ' + message.bearing);
+		var gaugeElement = document.getElementsByTagName('canvas')[0];
+		gaugeElement.setAttribute('data-value', message.bearing);
+		document.getElementById('heading_slider').value = round5(message.bearing);
+	});
+	
+    round5 = function (x) {
+        return (x % 5) >= 2.5 ? parseInt(x / 5) * 5 + 5 : parseInt(x / 5) * 5;
+    }
 
 	/* Camera position */
 	var camera_position = new ROSLIB.Topic({
@@ -167,6 +191,55 @@
 		camera = [parseInt(document.getElementById("camera_position_slider").value), 0, 0, 0];
 		var twist = new ROSLIB.Message({servo_angles : camera});
 		camera_position.publish(twist);
+	}
+
+	/* Auto navigation */
+	var auto_navigation = new ROSLIB.Topic({
+		ros : ros,
+		name : '/navigation_command',
+		messageType : 'exomy/NavigationCommand'
+	});
+	
+	new_heading = function (auto) {
+		var heading = 0;
+		heading_var = parseInt(document.getElementById("heading_slider").value);
+		if (auto === true) {
+			var heading_message = new ROSLIB.Message({auto_navigation: true, heading : heading_var});
+		}
+		else {
+			var heading_message = new ROSLIB.Message({auto_navigation: false, heading : heading_var});
+		}
+		auto_navigation.publish(heading_message);
+	}
+	
+	new_heading_diff = function (auto) {
+		var heading = 0;
+		var bearing = 0;
+		
+		var gaugeElement = document.getElementsByTagName('canvas')[0];
+		bearing = gaugeElement.getAttribute('data-value');
+		// console.log('Bearing: ' + bearing);
+		heading_diff = parseInt(document.getElementById("heading_diff_slider").value);
+		// console.log('heading_diff: ' + heading_diff);
+		heading_var = parseInt(bearing) + heading_diff;
+		// console.log('heading_var: ' + heading_var);
+		if (heading_var > 360) {
+			heading_var = heading_var - 360;
+		}
+		if (heading_var < 0) {
+			heading_var = heading_var + 360;
+		} 
+		// console.log('heading_var: ' + heading_var);
+		// heading_var = parseInt(heading_var);
+		
+		if (auto === true) {
+			var heading_message = new ROSLIB.Message({auto_navigation: true, heading : heading_var});
+		}
+		else {
+			var heading_message = new ROSLIB.Message({auto_navigation: false, heading : heading_var});
+		}
+		document.getElementById('heading_diff_slider').value = 0;
+		auto_navigation.publish(heading_message);
 	}
 
 	// Load Shutdown URL from system server and trigger therfore the defined shutdown
@@ -204,6 +277,7 @@
 	   }
 	
   </script>
+
   <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
@@ -224,6 +298,10 @@
 			<div class="camera_position" style="font-size:12px;">
 				<label for="camera_position_slider">Camera position:</label></br>
 			    <div>-45° <input id="camera_position_slider" type="range" min="-45" max="50" value="0" onchange="move_camera()"> +50°</div>
+				<label for="heading_slider">Set Heading:</label></br>
+				<div>0° <input id="heading_slider" type="range" min="0" max="359" value="0" onchange="new_heading(true)"> +359°</div>
+				<label for="heading_diff_slider">Turn by degree:</label></br>
+				<div>-180° <input id="heading_diff_slider" type="range" min="-179" max="179" value="0" onchange="new_heading_diff(true)"> +180°</div>
 			</div>
 		</div>
       </div>
@@ -232,6 +310,56 @@
         <div class="image_container">
           <img id="video_output" style="object-fit:cover; width:100%;"></img>
         </div>
+		
+		<div class="gauge">
+		<canvas data-type="radial-gauge"
+		        data-width="200"
+		        data-height="200"
+		        data-min-value="0"
+		        data-max-value="360"
+		        data-major-ticks="N,NE,E,SE,S,SW,W,NW,N"
+		        data-minor-ticks="22"
+		        data-ticks-angle="360"
+		        data-start-angle="180"
+		        data-stroke-ticks="false"
+		        data-highlights="false"
+		        data-color-plate="#33a"
+		        data-color-major-ticks="#f5f5f5"
+		        data-color-minor-ticks="#ddd"
+		        data-color-numbers="#ccc"
+		        data-color-needle="rgba(240, 128, 128, 1)"
+		        data-color-needle-end="rgba(255, 160, 122, .9)"
+		        data-value-box="true"
+		        data-animated-value="true"
+		        data-value-text-shadow="false"
+		        data-color-circle-inner="#fff"
+		        data-color-needle-circle-outer="#ccc"
+		        data-needle-circle-size="15"
+		        data-needle-circle-outer="false"
+		        data-animation-rule="linear"
+		        data-needle-type="line"
+		        data-needle-start="75"
+		        data-needle-end="99"
+		        data-needle-width="3"
+		        data-borders="true"
+		        data-border-inner-width="0"
+		        data-border-middle-width="0"
+		        data-border-outer-width="10"
+		        data-color-border-outer="#ccc"
+		        data-color-border-outer-end="#ccc"
+		        data-color-needle-shadow-down="#222"
+		        data-border-shadow-width="0"
+		        data-animation-target="plate"
+		        data-units="ᵍ"
+		        data-title="DIRECTION"
+		        data-font-title-size="19"
+		        data-color-title="#f5f5f5"
+		        data-animation-duration="1500"
+		        data-value="0"
+		        data-animate-on-init="true"
+		        data-use-min-path="true"
+		        ></canvas>
+			</div>
       </div>
       <div class="right" id="right">
         <div class="button_container">

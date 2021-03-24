@@ -70,10 +70,18 @@ body {
 }
 
 .image_container {
-    position: absolute;
+    position: relative;
     top: 20%;
-    height: 80%;
-    width: 80%;
+    grid-row: 1;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.gauge {
+  grid-row: 2;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .joy_container {
@@ -105,6 +113,7 @@ body {
     background: rgba(45, 48, 45, 0.1);
     grid-column: 2;
     height: 100%;
+    display: grid;
 }
 
 .right {

@@ -2,6 +2,7 @@
 import rospy
 from sensor_msgs.msg import Joy
 from exomy.msg import RoverCommand
+from exomy.msg import NavigationCommand
 from locomotion_modes import LocomotionMode
 import math
 
@@ -19,7 +20,12 @@ def callback(data):
     global motors_enabled
 
     rover_cmd = RoverCommand()
-
+    
+    # Turn off auto navigation
+    navigation_cmd = NavigationCommand()
+    navigation_cmd.auto_navigation = False
+    navpub.publish(navigation_cmd)
+    
     # Function map for the Logitech F710 joystick
     # Button on pad | function
     # --------------|----------------------
@@ -112,5 +118,6 @@ if __name__ == '__main__':
 
     sub = rospy.Subscriber("/joy", Joy, callback, queue_size=1)
     pub = rospy.Publisher('/rover_command', RoverCommand, queue_size=1)
+    navpub = rospy.Publisher('/navigation_command', NavigationCommand, queue_size=1)
 
     rospy.spin()
