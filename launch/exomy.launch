@@ -5,6 +5,7 @@
 	<node name="servos" pkg="exomy" type="servo_node.py" respawn="true" output="screen" />
 	<node name="compass" pkg="exomy" type="compass_node.py" respawn="true" output="screen" />
 	<node name="navigation" pkg="exomy" type="navigation_parser_node.py" respawn="true" output="screen" />
+	<node name="screen" pkg="exomy" type="screen_node.py" respawn="true" output="screen" />
 
     <node respawn="true" pkg="joy" type="joy_node" name="joy_node">
         <param name="coalesce_interval" value="0.05"/>

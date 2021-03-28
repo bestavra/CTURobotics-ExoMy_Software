@@ -15,6 +15,12 @@ RUN pip install adafruit-pca9685
 # Install smbus
 RUN pip install smbus
 
+# Install packages for screen driver
+RUN pip install RPi.GPIO
+# Install packages for screen node video display / currently not used
+#RUN apt-get install python3-gst-1.0 -y
+#RUN pip install videosequence
+
 # Install packages for web application
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get update && \

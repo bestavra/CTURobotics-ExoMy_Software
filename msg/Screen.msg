@@ -1,1 +1,2 @@
 string state
+string screen_message

@@ -192,6 +192,34 @@
 		var twist = new ROSLIB.Message({servo_angles : camera});
 		camera_position.publish(twist);
 	}
+	
+	/* Screen state */
+	var screen_state = new ROSLIB.Topic({
+		ros : ros,
+		name : '/state',
+		messageType : 'exomy/Screen'
+	});
+	
+	send_mood = function (mood) {
+		console.log('Mood: ' + mood);
+		var mood_state = new ROSLIB.Message({state : mood});
+		screen_state.publish(mood_state);
+	}
+	
+	/* Screen message */
+	var screen_message = new ROSLIB.Topic({
+		ros : ros,
+		name : '/screen_message',
+		messageType : 'exomy/Screen'
+	});
+	
+	talk = function () {
+		screen_message_text = document.getElementById("screen_text").value;
+		console.log('Screen Message: ' + screen_message_text);
+		var screen_message = new ROSLIB.Message({screen_message : screen_message_text});
+		screen_state.publish(screen_message);
+	}
+
 
 	/* Auto navigation */
 	var auto_navigation = new ROSLIB.Topic({
@@ -302,6 +330,15 @@
 				<div>0° <input id="heading_slider" type="range" min="0" max="359" value="0" onchange="new_heading(true)"> +360°</div>
 				<label for="heading_diff_slider">Turn by degree:</label></br>
 				<div>-180° <input id="heading_diff_slider" type="range" min="-179" max="179" value="0" onchange="new_heading_diff(true)"> +180°</div>
+				<div>
+					Mood:
+					<span id="mood_happy" onclick="send_mood('happy')" style="font-size:20px;">&#128512;</span>
+					<span id="mood_surprised" onclick="send_mood('surprised')" style="font-size:20px;">&#128562;</span>
+					<span id="mood_half_closed" onclick="send_mood('half_closed')" style="font-size:20px;">&#128528;</span>
+					<span id="mood_closed" onclick="send_mood('closed')" style="font-size:20px;">&#128566;</span>
+					<span id="mood_kiss" onclick="send_mood('kiss')" style="font-size:20px;">&#128536;</span>
+				</div>
+				<div><input id="screen_text" type="text" maxlength="70"><input type="submit" value="Talk!" onclick="talk()"></div>
 			</div>
 		</div>
       </div>
