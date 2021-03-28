@@ -10,7 +10,7 @@ global watchdog_timer
 
 
 def callback(cmds):
-        servo.setAngle(cmds.servo_angles)
+    servo.setAngle(cmds.servo_angles)
 
 if __name__ == "__main__":
     # This node waits for commands from the robot and sets the motors accordingly
