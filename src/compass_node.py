@@ -5,7 +5,7 @@ import lib.py_hmc5883l as py_hmc5883l
 
 def compass_bearing():
     pub = rospy.Publisher('bearing', Compass, queue_size=1)
-    rospy.init_node('compass', anonymous=True)
+
     rate = rospy.Rate(10) # 10hz
     
     gauss_set = rospy.get_param("gauss")
@@ -23,6 +23,7 @@ def compass_bearing():
         rate.sleep()
 
 if __name__ == '__main__':
+    rospy.init_node('compass', anonymous=True)
     rospy.loginfo("Starting the compass node")
     try:
         compass_bearing()
