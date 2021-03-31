@@ -112,6 +112,8 @@
 	  	document.getElementById('heading_slider').value = 0;
 		document.getElementById('heading_diff_slider').value = 0;
 	  	new_heading(false);
+		document.getElementById("screen_text").value = "";
+		talk();
     }
 
     joy_listener = new ROSLIB.Topic({
@@ -219,7 +221,6 @@
 		var screen_message = new ROSLIB.Message({screen_message : screen_message_text});
 		screen_state.publish(screen_message);
 	}
-
 
 	/* Auto navigation */
 	var auto_navigation = new ROSLIB.Topic({
@@ -337,6 +338,8 @@
 					<span id="mood_half_closed" onclick="send_mood('half_closed')" style="font-size:20px;">&#128528;</span>
 					<span id="mood_closed" onclick="send_mood('closed')" style="font-size:20px;">&#128566;</span>
 					<span id="mood_kiss" onclick="send_mood('kiss')" style="font-size:20px;">&#128536;</span>
+					<span id="mood_tongue" onclick="send_mood('tongue')" style="font-size:20px;">&#128539;</span>
+					
 				</div>
 				<div><input id="screen_text" type="text" maxlength="70"><input type="submit" value="Talk!" onclick="talk()"></div>
 			</div>
