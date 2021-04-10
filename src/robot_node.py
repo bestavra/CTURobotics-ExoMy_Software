@@ -20,11 +20,17 @@ def joy_callback(message):
     global range
     min_safety_range = 19
     max_safety_range = 45
-    if range > -1 and range < max_safety_range and message.steering > 0 and message.locomotion_mode == 1:
+    if range > -1 and range < max_safety_range and message.steering > 0 and message.locomotion_mode == 1 and message.safety_range_enabled == True:
         calc_range = np.clip(range,min_safety_range,max_safety_range)
-        speed_factor = (max_safety_range - min_safety_range) * ( calc_range - min_safety_range) / 100
-        message.vel = message.vel * speed_factor
+        speed_factor = float(calc_range - min_safety_range)/float(max_safety_range - min_safety_range)
+        exomy.safety_speed_factor(speed_factor)
         rospy.loginfo("Approching object...slowing down!")
+    elif range == -1 and message.safety_range_enabled == True:
+        pass
+    elif message.safety_range_enabled == False:
+        exomy.safety_speed_factor(speed_factor=0.3, reset=True)
+    else:
+        exomy.safety_speed_factor(reset=True)
     
     if message.motors_enabled is True:
         exomy.setLocomotionMode(message.locomotion_mode)

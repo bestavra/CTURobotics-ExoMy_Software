@@ -50,6 +50,8 @@ class Rover():
             self.ackermann_r_min = self.ackermann_fr_min
         else:
             self.ackermann_fr_min = self.ackermann_r_min
+            
+        self.speed_factor = 1
         
     def setLocomotionMode(self, locomotion_mode_command):
         '''
@@ -153,7 +155,13 @@ class Rover():
                 steering_angles[self.RR] = wheel_direction
 
         return steering_angles
-
+        
+    def safety_speed_factor(self, speed_factor=1, reset=False):
+        if reset == True:
+            self.speed_factor = speed_factor
+        else:
+            self.speed_factor = np.clip(speed_factor,self.speed_factor-0.5,self.speed_factor+0.05)
+        
     def joystickToVelocity(self, driving_command, steering_command):
         '''
         Converts the steering and drive command to the speeds of the individual motors
@@ -167,7 +175,7 @@ class Rover():
         if (self.locomotion_mode == LocomotionMode.ACKERMANN.value):
             
             #Speed parameters
-            v = driving_command
+            v = driving_command * self.speed_factor
             if(steering_command < 0):
                 v *= -1
             

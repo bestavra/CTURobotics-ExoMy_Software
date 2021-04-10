@@ -9,15 +9,18 @@ import math
 # Define locomotion modes
 global locomotion_mode
 global motors_enabled
+global safety_range_enabled
 
 locomotion_mode = LocomotionMode.ACKERMANN.value
 motors_enabled = True
+safety_range_enabled = True
 
 
 def callback(data):
 
     global locomotion_mode
     global motors_enabled
+    global safety_range_enabled
 
     rover_cmd = RoverCommand()
     
@@ -55,6 +58,20 @@ def callback(data):
 
     rover_cmd.locomotion_mode = locomotion_mode
 
+    # Enable and disable range tracking
+    # START Button
+    if (data.buttons[8] == 1):
+        if safety_range_enabled is True:
+            safety_range_enabled = False
+            rospy.loginfo("Safety Range disabled!")
+        elif safety_range_enabled is False:
+            safety_range_enabled = True
+            rospy.loginfo("Safety Range enabled!")
+        else:
+            rospy.logerr(
+                "Exceptional value for [safety_range_enabled] = {}".format(safety_range_enabled))
+            safety_range_enabled = False
+    
     # Enable and disable motors
     # START Button
     if (data.buttons[9] == 1):
@@ -69,6 +86,7 @@ def callback(data):
                 "Exceptional value for [motors_enabled] = {}".format(motors_enabled))
             motors_enabled = False
 
+    rover_cmd.safety_range_enabled = safety_range_enabled
     rover_cmd.motors_enabled = motors_enabled
 
     # The velocity is decoded as value between 0...100
