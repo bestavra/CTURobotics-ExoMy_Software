@@ -14,6 +14,9 @@ from PIL import Image, ImageDraw, ImageFont
 #Text support
 from textwrap import fill
 
+# Data file readout
+import json
+
 #Video support
 #from contextlib import closing
 #from videosequence import VideoSequence
@@ -52,10 +55,14 @@ class ExoMyScreen:
         
         self.fnt_path = file_path + "/resources/fonts/Orkney/Orkney Regular.ttf"
         
+        self.show_status = False
+
         self.talk(startup_message, fontsize=19)
 
     def display_image(self, imagepath):
         #image = Image.new("RGB", (self.width, self.height))
+        self.show_status = False
+
         try:
             image = Image.open(imagepath)
             image = image.resize((self.width, self.height))
@@ -84,6 +91,8 @@ class ExoMyScreen:
         text_box_width = 104
         text_box_height = 72
         max_lines = 4
+        
+        self.show_status = False
         
         #fnt_path = file_path + "/resources/fonts/Orkney/Orkney Regular.ttf"
         
@@ -132,19 +141,33 @@ class ExoMyScreen:
         self.screen.display(speach_bubble_image)
     
     def status(self):
-        self.talk("Status message?!")
-        status_color = (0, 51, 0)
-        status_image = Image.new("RGB", size=(self.width, self.height), color = (51, 204, 51))
-        d = ImageDraw.Draw(status_image)
-        fnt = ImageFont.truetype(self.fnt_path, 14)
-        d.text((4,4),"Status", font=fnt, fill=status_color)
-        d.line([(0, 20), (self.width, 20)], fill=status_color, width = 2)
-        
-        fnt = ImageFont.truetype(self.fnt_path, 12)
-        d.text((4,24),"Power: unknown", font=fnt, fill=status_color)
-        d.text((4,44),"Compass heading: unknown", font=fnt, fill=status_color)
-        #d.text((4,64),"Range: "+str(range), font=fnt, fill=status_color)
-        self.screen.display(status_image)
+        self.show_status = True
+        while self.show_status == True:
+            try:
+                status_color = (0, 51, 0)
+                status_image = Image.new("RGB", size=(self.width, self.height), color = (51, 204, 51))
+                d = ImageDraw.Draw(status_image)
+                fnt = ImageFont.truetype(self.fnt_path, 14)
+                d.text((4,4),"Status", font=fnt, fill=status_color)
+                d.line([(0, 20), (self.width, 20)], fill=status_color, width = 2)
+            
+                fnt = ImageFont.truetype(self.fnt_path, 12)
+                d.text((4,24),"Power: unknown", font=fnt, fill=status_color)
+                d.text((4,44),"Compass heading: unknown", font=fnt, fill=status_color)
+                d.text((4,64),"IP: "+str(self.ip_address()), font=fnt, fill=status_color)
+                #d.text((4,64),"Range: "+str(range), font=fnt, fill=status_color)
+                self.screen.display(status_image)
+            except:
+                self.talk("Status message?!")
+            time.sleep(30)
+    
+    def ip_address(self):
+        try:
+            f = open('/root/exomy_ws/src/exomy/scripts/temp/hostdata.json')
+            data = json.load(f)
+            return data['host']['ip-address']
+        except:
+            return "not available"
     
     def backlight(self, state):
         if state == True or state == False:
