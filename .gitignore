@@ -1,5 +1,6 @@
 *.pyc
 config/exomy.yaml
+config/exomy_servo_node.yaml
 config/*.backup
 .DS_Store
 .vscode/
