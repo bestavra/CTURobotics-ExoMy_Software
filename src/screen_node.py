@@ -30,7 +30,7 @@ def callback(message):
     #    screen.display_image("Error")
     global watchdog_timer
     watchdog_timer.shutdown()
-    watchdog_timer = rospy.Timer(rospy.Duration(10.0), watchdog, oneshot=True)
+    watchdog_timer = rospy.Timer(rospy.Duration(60.0), watchdog, oneshot=True)
     
 def screen_mood(message):
     global file_path
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         screen.close()
         pass
     
-    watchdog_timer = rospy.Timer(rospy.Duration(10.0), watchdog, oneshot=True)
+    watchdog_timer = rospy.Timer(rospy.Duration(60.0), watchdog, oneshot=True)
     
     rospy.on_shutdown(shutdown)
     
