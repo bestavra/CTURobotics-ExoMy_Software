@@ -2,3 +2,4 @@
 config/exomy.yaml
 config/*.backup
 .DS_Store
+.vscode/
