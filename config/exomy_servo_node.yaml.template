@@ -38,6 +38,13 @@ servo_pwm_center_degree_offset_2: 0
 servo_pwm_center_degree_offset_3: 0
 servo_pwm_center_degree_offset_4: 0
 
+# Servo startup position in degree 
+# (set 99 if servo should not move during startup)
+servo_startup_position_1: 99
+servo_startup_position_2: 99
+servo_startup_position_3: 99
+servo_startup_position_4: 99
+
 # Servo limits in degree counted from neutal position
 # Set maximum +-90 degree
 # ccw: counter-clock wise

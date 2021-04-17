@@ -33,6 +33,7 @@ class Servo():
         self.servo_pwm_range = [None] * 4
         self.angle = [None] * 4
         self.servo_pwm_degree_offset = [None] * 4
+        self.servo_startup_position = [None] * 4
         self.servo_ccw_degree = [None] * 4
         self.servo_cw_degree = [None] * 4
 
@@ -53,44 +54,45 @@ class Servo():
         if rospy.get_param("pin_servo_1")  != 99:
             self.servo_pwm_neutral[self.S_ONE] = rospy.get_param("servo_pwm_neutral_1")
             self.servo_pwm_range[self.S_ONE] = rospy.get_param("servo_pwm_range_1")
-            self.servo_pwm_degree_offset[self.S_ONE] = float(rospy.get_param("servo_pwm_center_degree_offset_1"))
+            self.servo_pwm_degree_offset[self.S_ONE] = rospy.get_param("servo_pwm_center_degree_offset_1")
+            self.servo_startup_position[self.S_ONE] = rospy.get_param("servo_startup_position_1")
             self.servo_ccw_degree[self.S_ONE] = rospy.get_param("servo_ccw_degree_1")
             self.servo_cw_degree[self.S_ONE] = rospy.get_param("servo_cw_degree_1")
 
         if rospy.get_param("pin_servo_2")  != 99:
             self.servo_pwm_neutral[self.S_TWO] = rospy.get_param("servo_pwm_neutral_2")
             self.servo_pwm_range[self.S_TWO] = rospy.get_param("servo_pwm_range_2")
-            self.servo_pwm_degree_offset[self.S_TWO] = float(rospy.get_param("servo_pwm_center_degree_offset_2"))
+            self.servo_pwm_degree_offset[self.S_TWO] = rospy.get_param("servo_pwm_center_degree_offset_2")
+            self.servo_startup_position[self.S_TWO] = rospy.get_param("servo_startup_position_2")
             self.servo_ccw_degree[self.S_TWO] = rospy.get_param("servo_ccw_degree_2")
             self.servo_cw_degree[self.S_TWO] = rospy.get_param("servo_cw_degree_2")
 
         if rospy.get_param("pin_servo_3")  != 99:
             self.servo_pwm_neutral[self.S_THREE] = rospy.get_param("servo_pwm_neutral_3")
             self.servo_pwm_range[self.S_THREE] = rospy.get_param("servo_pwm_range_3")
-            self.servo_pwm_degree_offset[self.S_THREE] = float(rospy.get_param("servo_pwm_center_degree_offset_3"))
+            self.servo_pwm_degree_offset[self.S_THREE] = rospy.get_param("servo_pwm_center_degree_offset_3")
+            self.servo_startup_position[self.S_THREE] = rospy.get_param("servo_startup_position_3")
             self.servo_ccw_degree[self.S_THREE] = rospy.get_param("servo_ccw_degree_3")
             self.servo_cw_degree[self.S_THREE] = rospy.get_param("servo_cw_degree_3")
 
         if rospy.get_param("pin_servo_4")  != 99:
             self.servo_pwm_neutral[self.S_FOUR] = rospy.get_param("servo_pwm_neutral_4")
             self.servo_pwm_range[self.S_FOUR] = rospy.get_param("servo_pwm_range_4")
-            self.servo_pwm_degree_offset[self.S_FOUR] = float(rospy.get_param("servo_pwm_center_degree_offset_4"))
+            self.servo_pwm_degree_offset[self.S_FOUR] = rospy.get_param("servo_pwm_center_degree_offset_4")
+            self.servo_startup_position[self.S_FOUR] = rospy.get_param("servo_startup_position_4")
             self.servo_ccw_degree[self.S_FOUR] = rospy.get_param("servo_ccw_degree_4")
             self.servo_cw_degree[self.S_FOUR] = rospy.get_param("servo_cw_degree_4")
         
-        
-        # Currently setting the motors into neutral is deactivated as it might
-        # rotate the servos outside their variable limits and standard positions
-        # Uncomment if required
-        '''
-        # Set steering motors to neutral values (straight)
+        # Set steering motors to startup position
         for servo_name, servo_pin in self.pins['servo'].items():
-            if servo_pin != 99:
-                self.pwm.set_pwm(servo_pin, 0, self.servo_pwm_neutral[servo_name])
-                time.sleep(0.1)
+            if servo_pin != 99 and self.servo_startup_position[servo_name] <= 90:
+                #self.pwm.set_pwm(servo_pin, 0, self.servo_pwm_neutral[servo_name])
+                duty_cycle = int(self.servo_pwm_neutral[servo_name] + self.servo_startup_position[servo_name]/90.0 * self.servo_pwm_range[servo_name] + self.servo_pwm_degree_offset[servo_name])
+                # Send duty cycle
+                self.pwm.set_pwm(servo_pin, 0, duty_cycle)
+                time.sleep(0.2)
             else:
                 pass
-        '''
 
     def setAngle(self, angle_command):
         # Loop through pin dictionary. The items key is the servo_name and the value the pin.
