@@ -15,7 +15,9 @@ def ultrasonic_range():
     rate = rospy.Rate(10)
     
     range = Range()
+    range.header.frame_id="range_forward"
     range.radiation_type = 0
+    range.field_of_view = 20
     range.min_range = 0.02
     range.max_range = 4.00
     
