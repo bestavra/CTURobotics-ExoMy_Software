@@ -2,24 +2,33 @@
 import rospy
 from sensor_msgs.msg import Joy
 from exomy.msg import RoverCommand
+from exomy.msg import NavigationCommand
 from locomotion_modes import LocomotionMode
 import math
 
 # Define locomotion modes
 global locomotion_mode
 global motors_enabled
+global safety_range_enabled
 
 locomotion_mode = LocomotionMode.ACKERMANN.value
 motors_enabled = True
+safety_range_enabled = True
 
 
 def callback(data):
 
     global locomotion_mode
     global motors_enabled
+    global safety_range_enabled
 
     rover_cmd = RoverCommand()
-
+    
+    # Turn off auto navigation
+    navigation_cmd = NavigationCommand()
+    navigation_cmd.auto_navigation = False
+    navpub.publish(navigation_cmd)
+    
     # Function map for the Logitech F710 joystick
     # Button on pad | function
     # --------------|----------------------
@@ -49,6 +58,20 @@ def callback(data):
 
     rover_cmd.locomotion_mode = locomotion_mode
 
+    # Enable and disable range tracking
+    # START Button
+    if (data.buttons[8] == 1):
+        if safety_range_enabled is True:
+            safety_range_enabled = False
+            rospy.loginfo("Safety Range disabled!")
+        elif safety_range_enabled is False:
+            safety_range_enabled = True
+            rospy.loginfo("Safety Range enabled!")
+        else:
+            rospy.logerr(
+                "Exceptional value for [safety_range_enabled] = {}".format(safety_range_enabled))
+            safety_range_enabled = False
+    
     # Enable and disable motors
     # START Button
     if (data.buttons[9] == 1):
@@ -63,6 +86,7 @@ def callback(data):
                 "Exceptional value for [motors_enabled] = {}".format(motors_enabled))
             motors_enabled = False
 
+    rover_cmd.safety_range_enabled = safety_range_enabled
     rover_cmd.motors_enabled = motors_enabled
 
     # The velocity is decoded as value between 0...100
@@ -112,5 +136,6 @@ if __name__ == '__main__':
 
     sub = rospy.Subscriber("/joy", Joy, callback, queue_size=1)
     pub = rospy.Publisher('/rover_command', RoverCommand, queue_size=1)
+    navpub = rospy.Publisher('/navigation_command', NavigationCommand, queue_size=1)
 
     rospy.spin()

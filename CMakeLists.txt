@@ -53,7 +53,10 @@ add_message_files(
       FILES
       RoverCommand.msg
       MotorCommands.msg
+	  ServoCommands.msg
       Screen.msg
+	  Compass.msg
+	  NavigationCommand.msg
   )
 ## Generate services in the 'srv' folder
 # add_service_files(

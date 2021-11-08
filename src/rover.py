@@ -16,10 +16,10 @@ class Rover():
     FL, FR, CL, CR, RL, RR = range(0, 6)
 
     # Defining locomotion modes
-    FAKE_ACKERMANN, ACKERMANN, POINT_TURN, CRABBING = range(0, 4)
+    ACKERMANN, POINT_TURN, CRABBING = range(1, 4)
 
     def __init__(self):
-        self.locomotion_mode = LocomotionMode.FAKE_ACKERMANN
+        self.locomotion_mode = LocomotionMode.ACKERMANN
         
         # x = axes distance
         # y = axes width
@@ -50,6 +50,8 @@ class Rover():
             self.ackermann_r_min = self.ackermann_fr_min
         else:
             self.ackermann_fr_min = self.ackermann_r_min
+            
+        self.speed_factor = 1
         
     def setLocomotionMode(self, locomotion_mode_command):
         '''
@@ -70,68 +72,6 @@ class Rover():
 
         steering_angles = [0]*6
         deg = steering_command
-
-        if(self.locomotion_mode == LocomotionMode.FAKE_ACKERMANN.value):
-            if (driving_command == 0):
-                # Stop
-                steering_angles[self.FL] = 0
-                steering_angles[self.FR] = 0
-                steering_angles[self.CR] = 0
-                steering_angles[self.CL] = 0
-                steering_angles[self.RL] = 0
-                steering_angles[self.RR] = 0
-                return steering_angles
-
-            if(80 < deg < 100):
-                # Drive straight forward
-                steering_angles[self.FL] = 0
-                steering_angles[self.FR] = 0
-                steering_angles[self.CR] = 0
-                steering_angles[self.CL] = 0
-                steering_angles[self.RL] = 0
-                steering_angles[self.RR] = 0
-            elif(-80 < deg < -100):
-                # Drive straight backwards
-                steering_angles[self.FL] = 0
-                steering_angles[self.FR] = 0
-                steering_angles[self.CR] = 0
-                steering_angles[self.CL] = 0
-                steering_angles[self.RL] = 0
-                steering_angles[self.RR] = 0
-            elif(100 < deg <= 180):
-                # Drive right forwards
-                steering_angles[self.FL] = 45
-                steering_angles[self.FR] = 45
-                steering_angles[self.CR] = 0
-                steering_angles[self.CL] = 0
-                steering_angles[self.RL] = -45
-                steering_angles[self.RR] = -45
-            elif(-100 > deg >= -180):
-                # Drive right backwards
-                steering_angles[self.FL] = 45
-                steering_angles[self.FR] = 45
-                steering_angles[self.CR] = 0
-                steering_angles[self.CL] = 0
-                steering_angles[self.RL] = -45
-                steering_angles[self.RR] = -45
-            elif(80 > deg >= 0):
-                # Drive left forwards
-                steering_angles[self.FL] = -45
-                steering_angles[self.FR] = -45
-                steering_angles[self.CR] = 0
-                steering_angles[self.CL] = 0
-                steering_angles[self.RL] = 45
-                steering_angles[self.RR] = 45
-            elif(0 > deg > -80):
-                # Drive left backwards
-                steering_angles[self.FL] = -45
-                steering_angles[self.FR] = -45
-                steering_angles[self.CR] = 0
-                steering_angles[self.CL] = 0
-                steering_angles[self.RL] = 45
-                steering_angles[self.RR] = 45
-
-            return steering_angles
         
         if(self.locomotion_mode == LocomotionMode.ACKERMANN.value):
 
@@ -215,7 +155,13 @@ class Rover():
                 steering_angles[self.RR] = wheel_direction
 
         return steering_angles
-
+        
+    def safety_speed_factor(self, speed_factor=1, reset=False):
+        if reset == True:
+            self.speed_factor = speed_factor
+        else:
+            self.speed_factor = np.clip(speed_factor,self.speed_factor-0.5,self.speed_factor+0.05)
+        
     def joystickToVelocity(self, driving_command, steering_command):
         '''
         Converts the steering and drive command to the speeds of the individual motors
@@ -225,29 +171,11 @@ class Rover():
         '''
 
         motor_speeds = [0]*6
-        if (self.locomotion_mode == LocomotionMode.FAKE_ACKERMANN.value):
-            if(driving_command > 0 and steering_command >= 0):
-                motor_speeds[self.FL] = 50
-                motor_speeds[self.FR] = 50
-                motor_speeds[self.CR] = 50
-                motor_speeds[self.CL] = 50
-                motor_speeds[self.RL] = 50
-                motor_speeds[self.RR] = 50
-
-            elif(driving_command > 0 and steering_command <= 0):
-                motor_speeds[self.FL] = -50
-                motor_speeds[self.FR] = -50
-                motor_speeds[self.CR] = -50
-                motor_speeds[self.CL] = -50
-                motor_speeds[self.RL] = -50
-                motor_speeds[self.RR] = -50
-
-            return motor_speeds
             
         if (self.locomotion_mode == LocomotionMode.ACKERMANN.value):
             
             #Speed parameters
-            v = driving_command
+            v = driving_command * self.speed_factor
             if(steering_command < 0):
                 v *= -1
             
