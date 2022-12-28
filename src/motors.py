@@ -73,6 +73,7 @@ class Motors():
         self.steering_pwm_range[self.RR] = rospy.get_param("steer_pwm_range_rr")
 
         self.driving_pwm_neutral = rospy.get_param("drive_pwm_neutral")
+
         self.driving_pwm_range = rospy.get_param("drive_pwm_range")
 
         # Set steering motors to neutral values (straight)
