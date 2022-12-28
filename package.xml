@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>exomy</name>
-  <version>1.0.3</version>
+  <version>2.0.0</version>
   <description>The ExoMy ROS package</description>
 
-  <maintainer email="max.ehrhardt@hotmail.de">Maximilian Ehrhardt</maintainer>
+  <maintainer email="">0xD0M1M0</maintainer>
   <license>GPLv3</license>
   <url type="website">https://github.com/esa-prl/ExoMy</url>
-  <author email="max.ehrhardt@hotmail.de">Maximilian Ehrhardt</author>
+  <author email="">0xD0M1M0</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>rospy</build_depend>
