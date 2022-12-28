@@ -1,5 +1,9 @@
-# ExoMy - Software Repository
+# ExoMy - Forked Software Repository
 This repository contains the software to run Exomy. The [wiki](https://github.com/esa-prl/ExoMy/wiki) explains you how to use it.
+
+I forked the main repository of ESA-PRL and merged all my open pull requests into this new main. This comes after many talks with the ESA-Team at ESTEC stating that they cannot merge any unchecked code (which is understandable), but do not have any funding to work on this project.
+
+So feel free to submit your issues and pull requests here. I will try my best to continue supporting this project and release software updates and bug fixes.
 
 ![ExoMy image](https://github.com/esa-prl/ExoMy/wiki/images/renderings/2020_02_25.JPG)
 
