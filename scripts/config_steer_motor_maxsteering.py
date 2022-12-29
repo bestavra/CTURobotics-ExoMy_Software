@@ -9,7 +9,7 @@ config_filename = '../config/exomy.yaml'
 def get_steering_motor_pins():
     steering_motor_pins = {}
     with open(config_filename, 'r') as file:
-        param_dict = yaml.load(file)
+        param_dict = yaml.load(file,Loader=yaml.FullLoader)
 
     for param_key, param_value in param_dict.items():
         if('pin_steer_' in str(param_key)):
@@ -19,7 +19,7 @@ def get_steering_motor_pins():
 def get_steering_pwm_neutral_values():
     steering_pwm_neutral_values = {}    
     with open(config_filename, 'r') as file:
-        param_dict = yaml.load(file)
+        param_dict = yaml.load(file,Loader=yaml.FullLoader)
 
     for param_key, param_value in param_dict.items():
         if('steer_pwm_neutral_' in str(param_key)):
@@ -29,7 +29,7 @@ def get_steering_pwm_neutral_values():
 def get_steering_pwm_range_values():
     steering_pwm_range_values = {}    
     with open(config_filename, 'r') as file:
-        param_dict = yaml.load(file)
+        param_dict = yaml.load(file,Loader=yaml.FullLoader)
 
     for param_key, param_value in param_dict.items():
         if('steer_pwm_range_' in str(param_key)):
@@ -162,16 +162,16 @@ ctrl+c - Exit script
             pwm.set_pwm(pin_value, 0, pwm_left_value)
             time.sleep(0.1)
             print('Current value: ' + str(pwm_left_value) + '\n')
-            key_input = raw_input(
+            key_input = input(
                 'q-set / a-decrease pwm left value/ d-increase pwm left value\n')
-            if(key_input is 'q'):
+            if(key_input == 'q'):
                 print('PWM left value for ' + get_position_name(pin_name) +
                       ' has been set.\n')
                 break
-            elif(key_input is 'a'):
+            elif(key_input == 'a'):
                 print('Decreased pwm left value')
                 pwm_left_value-= 5
-            elif(key_input is 'd'):
+            elif(key_input == 'd'):
                 print('Increased pwm left value')
                 pwm_left_value += 5
          
@@ -186,16 +186,16 @@ ctrl+c - Exit script
             pwm.set_pwm(pin_value, 0, pwm_right_value)
             time.sleep(0.1)
             print('Current value: ' + str(pwm_right_value) + '\n')
-            key_input = raw_input(
+            key_input = input(
                 'q-set / a-decrease pwm right value/ d-increase pwm right value\n')
-            if(key_input is 'q'):
+            if(key_input == 'q'):
                 print('PWM right value for ' + get_position_name(pin_name) +
                       ' has been set.\n')
                 break
-            elif(key_input is 'a'):
+            elif(key_input == 'a'):
                 print('Decreased pwm right value')
                 pwm_right_value-= 5
-            elif(key_input is 'd'):
+            elif(key_input == 'd'):
                 print('Increased pwm right value')
                 pwm_right_value += 5
         
