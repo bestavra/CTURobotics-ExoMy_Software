@@ -64,7 +64,7 @@ def callback(data):
         controller_funtion_map = {
             "x_axis": 0,
             "y_axis": 1,
-            "invert_x_axis": True,
+            "invert_x_axis": False,
             "X_button": 2,
             "Y_button": 3,
             "A_button": 0,
