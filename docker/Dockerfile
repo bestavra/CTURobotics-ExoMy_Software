@@ -20,7 +20,7 @@ RUN pip3 install adafruit-pca9685
 
 
 # Install packages for web application
-RUN curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
+RUN curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
 RUN sudo apt-get update && \
     sudo apt-get install nodejs -y
 
