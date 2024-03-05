@@ -1,5 +1,5 @@
 # Base image
-FROM ros:foxy
+FROM ros:humble
 
 ENV TZ=Europe/Amsterdam
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -15,7 +15,7 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh
 
 # Install additional ros packages
 RUN sudo apt-get update && \
-    sudo apt-get install ros-foxy-joy -y
+    sudo apt-get install ros-humble-joy -y
 RUN pip3 install adafruit-pca9685
 
 
