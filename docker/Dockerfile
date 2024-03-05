@@ -11,7 +11,7 @@ RUN apt-get update && \
 # OH-MY-ZSH Installation
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" &&\
     sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/' ~/.zshrc &&\
-    echo "source /opt/ros/foxy/setup.zsh" >> ~/.zshrc 
+    echo "source /opt/ros/humble/setup.zsh" >> ~/.zshrc 
 
 # Install additional ros packages
 RUN sudo apt-get update && \
